@@ -50,4 +50,4 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--port', nargs='?', default=5000,
                         help='设定B2B Python运行的端口,默认为5000')
     args = parser.parse_args()
-    b2b_server.run(port=args.port)
+    b2b_server.run(host='0.0.0.0', port=args.port)
