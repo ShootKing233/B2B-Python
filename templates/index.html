@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>B2B-Player[{{ roomid }}]</title>
+    <style>
+        .mainContainer {
+            display: block;
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @media screen and (min-width: 1152px) {
+            .mainContainer {
+                display: block;
+                width: 1152px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        .videoContainer video {
+            width: 100%;
+            height: 100%;
+        }
+
+        .centeredVideo {
+            display: block;
+            width: 100%;
+            height: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: auto;
+        }
+
+        .controls {
+            display: block;
+            width: 100%;
+            text-align: left;
+            margin: 8px auto 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="mainContainer">
+    <div class="videoContainer">
+        <video id="b2bLiveStream" class="centeredVideo" controls autoplay>
+            您的浏览器过于老旧,不支持HTML5&amp;lt;video&amp;gt;标签.
+        </video>
+    </div>
+    <div class="controls">
+        <button onclick="player_load()">加载</button>
+        <button onclick="player_play()">播放</button>
+        <button onclick="player_pause()">暂停</button>
+        <button onclick="player_destroy()">停止</button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/mpegts.js@1.6.6/dist/mpegts.min.js"></script>
+
+<script>
+    function player_load() {
+        element = document.getElementById('b2bLiveStream');
+        if (typeof player !== "undefined") {
+            if (player != null) {
+                player.unload();
+                player.detachMediaElement();
+                player.destroy();
+                player = null;
+            }
+        }
+        player = mpegts.createPlayer({
+            isLive: true,
+            liveBufferLatencyChasing: true,
+            type: 'mse',
+            url: '{{ url|safe }}',
+            withCredentials: false
+        }, {
+            enableWorker: true,
+            lazyLoadMaxDuration: 3 * 60,
+            seekType: 'range',
+            liveBufferLatencyChasing: true
+        });
+        player.attachMediaElement(element);
+        player.load();
+    }
+
+    function player_play() {
+        player.play();
+    }
+
+    function player_pause() {
+        player.pause();
+    }
+
+    function player_destroy() {
+        player.pause();
+        player.unload();
+        player.detachMediaElement();
+        player.destroy();
+        player = null;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        player_load();
+    });
+</script>
+</body>
+</html>
